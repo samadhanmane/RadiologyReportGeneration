@@ -117,7 +117,7 @@ ScratchRadiology/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/preetiii20/RadiologyReportGeneration_01.git
+git clone[ ](https://github.com/samadhanmane/RadiologyReportGeneration.git]
 cd ScratchRadiology
 ```
 
