@@ -268,7 +268,7 @@ Open: http://localhost:5000
 
 This project is deployed on HuggingFace Spaces.
 
-**HuggingFace Spaces Link:** [Add your HuggingFace Spaces URL here]
+**HuggingFace Spaces Link:** 
 
 ```
 https://huggingface.co/spaces/PreetiK2172/ScratchRadiology
