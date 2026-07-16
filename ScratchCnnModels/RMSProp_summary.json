@@ -1,0 +1,10 @@
+{
+  "optimizer": "RMSProp",
+  "lr": 0.001,
+  "epochs": 70,
+  "best_val_acc": 86.55,
+  "best_val_f1": 0.1973,
+  "best_val_auc": 0.6486,
+  "weights_path": "ScratchCnnModels\\RMSProp_best.pth",
+  "history_path": "ScratchCnnModels\\RMSProp_history.json"
+}

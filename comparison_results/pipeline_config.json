@@ -1,0 +1,26 @@
+{
+  "best_model_name": "Scratch-Adam",
+  "model_type": "scratch",
+  "pth_path": "ScratchCnnModels\\Adam_best.pth",
+  "img_size": 128,
+  "in_channels": 6,
+  "labels": [
+    "Enlarged Cardiomediastinum",
+    "Cardiomegaly",
+    "Lung Opacity",
+    "Lung Lesion",
+    "Edema",
+    "Consolidation",
+    "Pneumonia",
+    "Atelectasis",
+    "Pneumothorax",
+    "Pleural Effusion",
+    "Pleural Other",
+    "Fracture",
+    "Support Devices",
+    "No Finding"
+  ],
+  "mean_auc": 0.6811,
+  "f1_macro": 0.2152,
+  "accuracy": 0.8689
+}

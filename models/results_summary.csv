@@ -1,0 +1,4 @@
+Model,Accuracy,Macro F1,Weighted F1,Mean AUC
+CheXNet,0.8903,0.1547,0.5327,0.6699
+BioViT,0.8931,0.1215,0.513,0.6008
+EfficientNet,0.8933,0.14,0.5237,0.6298

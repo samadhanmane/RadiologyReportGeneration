@@ -1,0 +1,5 @@
+Model,Type,Accuracy,Macro F1,Weighted F1,Mean AUC
+Scratch-SGD,Scratch CNN,0.8685,0.2202,0.2202,0.6635
+Scratch-Adam,Scratch CNN,0.8689,0.2152,0.2152,0.6811
+Scratch-AdamW,Scratch CNN,0.8693,0.2182,0.2182,0.6678
+Scratch-RMSProp,Scratch CNN,0.8655,0.1973,0.1973,0.6486

@@ -1,0 +1,8 @@
+Model,Type,Accuracy,F1,AUC
+BioViT,Pretrained,0.8952,0.1772,
+EfficientNet,Pretrained,0.8939,0.2508,
+CheXNet,Pretrained,0.8939,0.2453,
+CNN-AdamW,Scratch CNN,0.8693,0.2182,0.6678
+CNN-Adam,Scratch CNN,0.8689,0.2152,0.6811
+CNN-SGD,Scratch CNN,0.8685,0.2202,0.6635
+CNN-RMSProp,Scratch CNN,0.8655,0.1973,0.6486

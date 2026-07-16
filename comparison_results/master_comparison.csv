@@ -1,0 +1,5 @@
+Model,Type,Input,IMG,Epochs,LR,Best Val Acc (%),Best Val AUC,Train Acc (%),Test  Acc (%),Test F1 Macro,Test F1 Weighted,Test Mean AUC
+Scratch-Adam,Scratch CNN,6-ch (F+L),128x128,70,0.001,86.89,0.6811,86.89,86.89,0.2152,0.2152,0.6811
+Scratch-AdamW,Scratch CNN,6-ch (F+L),128x128,70,0.001,86.93,0.6678,86.93,86.93,0.2182,0.2182,0.6678
+Scratch-SGD,Scratch CNN,6-ch (F+L),128x128,70,0.01,86.85,0.6635,86.85,86.85,0.2202,0.2202,0.6635
+Scratch-RMSProp,Scratch CNN,6-ch (F+L),128x128,70,0.001,86.55,0.6486,86.55,86.55,0.1973,0.1973,0.6486

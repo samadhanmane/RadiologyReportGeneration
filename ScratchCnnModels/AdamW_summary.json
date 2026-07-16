@@ -1,0 +1,10 @@
+{
+  "optimizer": "AdamW",
+  "lr": 0.001,
+  "epochs": 70,
+  "best_val_acc": 86.93,
+  "best_val_f1": 0.2182,
+  "best_val_auc": 0.6678,
+  "weights_path": "ScratchCnnModels\\AdamW_best.pth",
+  "history_path": "ScratchCnnModels\\AdamW_history.json"
+}

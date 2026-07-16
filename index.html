@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Imaging Center — AI Radiology</title>
+<style>
+  :root {
+    --blue:     #1a4f8a;
+    --lblue:    #e8f0fb;
+    --green:    #1a7a4a;
+    --orange:   #c45c00;
+    --red:      #b91c1c;
+    --gray:     #555;
+    --lgray:    #f5f5f7;
+    --white:    #ffffff;
+    --shadow:   0 4px 24px rgba(26,79,138,0.10);
+    --radius:   14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", Arial, sans-serif; }
+  body { background: var(--lgray); color: #222; min-height: 100vh; }
+
+  header {
+    background: linear-gradient(135deg, var(--blue) 0%, #2563b0 100%);
+    color: var(--white); padding: 18px 40px;
+    display: flex; align-items: center; gap: 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  header .logo-icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.18); display: flex;
+    align-items: center; justify-content: center; font-size: 26px;
+  }
+  header .brand h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+  header .brand p  { font-size: 12px; opacity: 0.78; margin-top: 2px; }
+  header .status-badge {
+    margin-left: auto; background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px; padding: 5px 16px; font-size: 12px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80;
+         animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 28px 20px; }
+  .grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 24px; }
+  @media(max-width:900px){ .grid{ grid-template-columns:1fr; } }
+
+  .card {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 28px;
+  }
+  .card-title {
+    font-size: 15px; font-weight: 700; color: var(--blue);
+    margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+    padding-bottom: 12px; border-bottom: 2px solid var(--lblue);
+  }
+
+  .upload-zone {
+    border: 2.5px dashed #93b4e0; border-radius: 12px;
+    padding: 36px 20px; text-align: center; cursor: pointer;
+    transition: all 0.25s; background: var(--lblue);
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--blue); background: #dce8f7; }
+  .upload-zone .icon { font-size: 44px; margin-bottom: 10px; }
+  .upload-zone p { color: var(--gray); font-size: 13.5px; }
+  .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  #preview-wrap { margin-top: 14px; display: none; }
+  #preview-wrap img { width: 100%; border-radius: 10px; max-height: 220px; object-fit: cover; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 12.5px; font-weight: 600;
+                      color: var(--gray); margin-bottom: 5px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 9px 12px; border: 1.5px solid #d0d9e8;
+    border-radius: 8px; font-size: 13px; transition: border 0.2s;
+    background: #fafbfd;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none; border-color: var(--blue); background: var(--white);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 26px; border-radius: 9px; font-size: 14px;
+    font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+  }
+  .btn-primary { background: var(--blue); color: white; width: 100%; justify-content: center; }
+  .btn-primary:hover { background: #153f70; transform: translateY(-1px); }
+  .btn-primary:disabled { background: #93b4e0; cursor: not-allowed; transform: none; }
+  .btn-pdf { background: linear-gradient(135deg,#1a7a4a,#2aab66);
+              color:white; margin-top: 16px; width: 100%; justify-content: center; }
+  .btn-pdf:hover { background: linear-gradient(135deg,#155e38,#239a58); transform:translateY(-1px); }
+
+  .loading { display: none; flex-direction: column; align-items: center;
+             gap: 14px; padding: 30px; }
+  .spinner {
+    width: 48px; height: 48px; border: 4px solid var(--lblue);
+    border-top-color: var(--blue); border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading p { color: var(--gray); font-size: 13.5px; }
+
+  #results { display: none; }
+  .images-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+  .img-card { border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .img-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+  .img-label { text-align: center; font-size: 11.5px; color: var(--gray);
+               padding: 7px; background: var(--lgray); font-style: italic; }
+
+  .disease-list { display: flex; flex-direction: column; gap: 9px; margin-bottom: 20px; }
+  .disease-item { display: flex; align-items: center; gap: 10px; }
+  .disease-name { width: 190px; font-size: 12px; color: #333; flex-shrink: 0; }
+  .bar-wrap { flex: 1; background: #e8eef5; border-radius: 20px; height: 12px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 20px; transition: width 1s ease; }
+  .bar-pct { width: 44px; font-size: 11.5px; color: var(--gray); text-align: right; flex-shrink: 0; }
+
+  .report-section { margin-bottom: 16px; }
+  .report-section h4 {
+    font-size: 12px; font-weight: 700; color: var(--blue);
+    text-transform: uppercase; letter-spacing: 0.8px;
+    margin-bottom: 6px; padding-bottom: 5px;
+    border-bottom: 1.5px solid var(--lblue);
+  }
+  .report-section p { font-size: 13px; color: #333; line-height: 1.7; }
+
+  .steps { display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
+  .step { flex: 1; min-width: 100px; text-align: center; padding: 14px 10px;
+          background: var(--lblue); border-radius: 10px; }
+  .step .num { width: 30px; height: 30px; border-radius: 50%; background: var(--blue);
+               color: white; font-size: 13px; font-weight: 700;
+               display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+  .step p { font-size: 11.5px; color: var(--gray); }
+
+  footer { background: var(--blue); color: rgba(255,255,255,0.7);
+           text-align: center; padding: 16px; font-size: 12px; margin-top: 40px; }
+  footer span { color: white; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">🫁</div>
+  <div class="brand">
+    <h1>SMART IMAGING CENTER</h1>
+    <p>AI-Powered Radiology Report Generation System</p>
+  </div>
+  <div class="status-badge"><span class="dot"></span> AI System Online</div>
+</header>
+
+<div class="container">
+  <div class="steps">
+    <div class="step"><div class="num">1</div><p>Upload X-Ray</p></div>
+    <div class="step"><div class="num">2</div><p>Enter Patient Info</p></div>
+    <div class="step"><div class="num">3</div><p>AI Analysis</p></div>
+    <div class="step"><div class="num">4</div><p>Download PDF Report</p></div>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <div class="card-title">📤 Upload & Patient Details</div>
+        <div class="upload-zone" id="drop-zone">
+          <input type="file" id="xray-input" accept="image/*">
+          <div class="icon">🩻</div>
+          <p><strong>Click or drag</strong> to upload chest X-ray</p>
+          <p style="font-size:11px;margin-top:6px;opacity:0.7">PNG, JPG, JPEG supported</p>
+        </div>
+        <div id="preview-wrap"><img id="preview-img" src="" alt="preview"></div>
+
+        <div style="margin-top:20px;">
+          <div class="form-group">
+            <label>Patient Full Name</label>
+            <input type="text" id="p-name" placeholder="e.g. Raj Sharma">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Age</label>
+              <input type="text" id="p-age" placeholder="e.g. 45">
+            </div>
+            <div class="form-group">
+              <label>Sex</label>
+              <select id="p-sex">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>PID</label>
+              <input type="text" id="p-pid" placeholder="N/A">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Referring Doctor</label>
+            <input type="text" id="p-ref" placeholder="e.g. Dr. Self-Referral">
+          </div>
+          <div class="form-group">
+            <label>Clinical History</label>
+            <textarea id="p-history" rows="3"
+              placeholder="e.g. Shortness of breath, chest pain, fever..."></textarea>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="analyze-btn" disabled onclick="analyzeXray()">
+          🔍 Analyze X-Ray & Generate Report
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title">📋 AI Radiology Report</div>
+
+        <div id="placeholder" style="text-align:center;padding:50px 20px;color:var(--gray);">
+          <div style="font-size:60px;margin-bottom:16px;">🫁</div>
+          <p style="font-size:15px;font-weight:600;color:var(--blue);margin-bottom:8px;">
+            Ready for Analysis</p>
+          <p style="font-size:13px;">Upload a chest X-ray and fill patient details<br>to generate an AI radiology report.</p>
+        </div>
+
+        <div class="loading" id="loading">
+          <div class="spinner"></div>
+          <p id="loading-text">Analyzing X-ray with BioViT...</p>
+        </div>
+
+        <div id="results">
+          <div class="images-row">
+            <div class="img-card">
+              <img id="orig-img" src="" alt="Original X-Ray">
+              <div class="img-label">Original X-Ray</div>
+            </div>
+            <div class="img-card">
+              <img id="heatmap-img" src="" alt="Saliency Map">
+              <div class="img-label">Saliency Activation Map</div>
+            </div>
+          </div>
+
+          <div class="card-title" style="margin-bottom:12px;">🎯 Disease Confidence</div>
+          <div class="disease-list" id="disease-list"></div>
+
+          <div class="card-title" style="margin-top:20px;margin-bottom:12px;">📄 Generated Report</div>
+          <div class="report-section">
+            <h4>Clinical History</h4>
+            <p id="r-history">—</p>
+          </div>
+          <div class="report-section">
+            <h4>Technique</h4>
+            <p>Standard frontal projection of the chest was obtained.
+               AI-assisted analysis performed using BioViT deep learning model.</p>
+          </div>
+          <div class="report-section">
+            <h4>Comparison</h4>
+            <p>No prior examinations are available for comparison.</p>
+          </div>
+          <div class="report-section">
+            <h4>Findings</h4>
+            <p id="r-findings">—</p>
+          </div>
+          <div class="report-section">
+            <h4>Impression</h4>
+            <p id="r-impression">—</p>
+          </div>
+
+          <button class="btn btn-pdf" onclick="downloadPDF()">
+            📥 Download Professional PDF Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span>SMART IMAGING CENTER</span> · AI-Assisted Radiology ·
+  This report is AI-generated and must be reviewed by a qualified radiologist.
+</footer>
+
+<script>
+const API = window.location.origin + '/api';
+let analysisData = null;
+
+const dropZone   = document.getElementById('drop-zone');
+const xrayInput  = document.getElementById('xray-input');
+const analyzeBtn = document.getElementById('analyze-btn');
+const previewWrap= document.getElementById('preview-wrap');
+const previewImg = document.getElementById('preview-img');
+
+xrayInput.addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    previewImg.src = ev.target.result;
+    previewWrap.style.display = 'block';
+    analyzeBtn.disabled = false;
+  };
+  reader.readAsDataURL(file);
+});
+
+['dragover','dragenter'].forEach(evt =>
+  dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('drag'); }));
+['dragleave','drop'].forEach(evt =>
+  dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.remove('drag'); }));
+dropZone.addEventListener('drop', e => {
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  xrayInput.files = e.dataTransfer.files;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    previewImg.src = ev.target.result;
+    previewWrap.style.display = 'block';
+    analyzeBtn.disabled = false;
+  };
+  reader.readAsDataURL(file);
+});
+
+async function analyzeXray() {
+  const file = xrayInput.files[0];
+  if (!file) { alert('Please upload an X-ray first.'); return; }
+
+  document.getElementById('placeholder').style.display = 'none';
+  document.getElementById('results').style.display     = 'none';
+  document.getElementById('loading').style.display     = 'flex';
+  analyzeBtn.disabled = true;
+
+  const loadingMsgs = [
+    'Analyzing X-ray with BioViT...',
+    'Running Grad-CAM saliency...',
+    'Encoding clinical history with BioBERT...',
+    'Generating radiology report...',
+    'Formatting results...'
+  ];
+  let msgIdx = 0;
+  const msgInterval = setInterval(() => {
+    document.getElementById('loading-text').textContent = loadingMsgs[msgIdx % loadingMsgs.length];
+    msgIdx++;
+  }, 1200);
+
+  try {
+    const formData = new FormData();
+    formData.append('image',   file);
+    formData.append('history', document.getElementById('p-history').value);
+
+    const resp = await fetch(`${API}/analyze`, { method: 'POST', body: formData });
+    const json = await resp.json();
+    clearInterval(msgInterval);
+
+    if (!resp.ok || json.error) throw new Error(json.error || 'Analysis failed');
+
+    analysisData = json.data;
+    renderResults(analysisData);
+
+  } catch(err) {
+    clearInterval(msgInterval);
+    document.getElementById('loading').style.display     = 'none';
+    document.getElementById('placeholder').style.display = 'block';
+    alert('Error: ' + err.message);
+    analyzeBtn.disabled = false;
+  }
+}
+
+function renderResults(data) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+
+  document.getElementById('orig-img').src    = 'data:image/png;base64,' + data.orig_b64;
+  document.getElementById('heatmap-img').src = 'data:image/png;base64,' + data.overlay_b64;
+  document.getElementById('r-history').textContent    = document.getElementById('p-history').value || 'Not provided.';
+  document.getElementById('r-findings').textContent   = data.findings   || 'No significant findings.';
+  document.getElementById('r-impression').textContent = data.impression || 'A narrative report.';
+
+  const list = document.getElementById('disease-list');
+  list.innerHTML = '';
+  data.diseases.slice(0, 8).forEach(d => {
+    const pct = (d.prob * 100).toFixed(1);
+    const clr = d.prob >= 0.6 ? '#b91c1c' : d.prob >= 0.35 ? '#c45c00' : '#1a7a4a';
+    list.innerHTML += `
+      <div class="disease-item">
+        <div class="disease-name">${d.name}</div>
+        <div class="bar-wrap">
+          <div class="bar-fill" style="width:${Math.min(d.prob*100,100)}%;background:${clr}"></div>
+        </div>
+        <div class="bar-pct">${pct}%</div>
+      </div>`;
+  });
+
+  analyzeBtn.disabled = false;
+}
+
+async function downloadPDF() {
+  if (!analysisData) { alert('Please analyze an X-ray first.'); return; }
+
+  const payload = {
+    patient_name    : document.getElementById('p-name').value    || 'Patient',
+    age             : document.getElementById('p-age').value     || 'N/A',
+    sex             : document.getElementById('p-sex').value     || 'N/A',
+    pid             : document.getElementById('p-pid').value     || 'N/A',
+    ref_doctor      : document.getElementById('p-ref').value     || 'Self-Referral',
+    clinical_history: document.getElementById('p-history').value || '',
+    findings        : analysisData.findings,
+    impression      : analysisData.impression,
+    diseases        : analysisData.diseases,
+    orig_b64        : analysisData.orig_b64,
+    overlay_b64     : analysisData.overlay_b64,
+  };
+
+  try {
+    const resp = await fetch(`${API}/download_pdf`, {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify(payload),
+    });
+    if (!resp.ok) throw new Error('PDF generation failed');
+    const blob = await resp.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href     = url;
+    a.download = `Radiology_Report_${document.getElementById('p-name').value || 'Patient'}.pdf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch(err) {
+    alert('PDF Error: ' + err.message);
+  }
+}
+</script>
+</body>
+</html>

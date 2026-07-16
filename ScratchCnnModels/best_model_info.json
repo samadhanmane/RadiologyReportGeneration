@@ -1,0 +1,11 @@
+{
+  "best_optimizer": "AdamW",
+  "best_lr": 0.001,
+  "best_accuracy": 86.93,
+  "best_f1": 0.2182,
+  "best_auc": 0.6678,
+  "epochs": 70,
+  "img_size": 128,
+  "input_channels": 6,
+  "weights": "ScratchCnnModels\\best_scratch_cnn.pth"
+}
