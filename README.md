@@ -4,15 +4,6 @@ Automated chest X-ray analysis and radiology report generation using BioViT, Bio
 
 ---
 
-## Team Members
-
-| Name | PRN |
-|------|-----|
-| [Preeti Koli] | [202301040213] |
-| [Sakshi Bhingarkar] | [202301040260] |
-| [Vaishnavi Thorave] | [202301040261] |
-| [Kulshree Nakshane] | [202301040299] |
-
 
 **Course:** Deep Learning / Artificial Intelligence
 **Academic Year:** 2025-26
